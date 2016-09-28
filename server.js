@@ -4,8 +4,15 @@ var fs = require('fs');
 var mongo = require('mongodb').MongoClient;
 var app = express();
 
+/*For heroku deployment:
 var appURL = 'https://shorturl-djmot.herokuapp.com';
 var dbURL = 'mongodb://djmot:' + process.env.MONGODB_PASSWORD + '@ds021356.mlab.com:21356/data';
+*/
+
+/*For cloud9 development:*/
+var appURL = 'https://project-djmot.c9users.io';
+var dbURL = 'mongodb://djmot:' + process.env.MONGODB_PASSWORD + '@ds021356.mlab.com:21356/data';
+
 
 //----------------------------------------------------------------------------
 // Helper functions.
@@ -53,6 +60,7 @@ app.get('/new/*', function(request, response) {
     }
     
     // Search db for given URL.
+    console.log("Searching: " + userURL);
     collection.find(
         { "old_url" : { $eq : userURL } },
         { _id : 0, "ending" : 0 },
@@ -103,7 +111,7 @@ app.get('/new/*', function(request, response) {
                     "old_url" : userURL,
                     "new_url" : appURL + "/" + num.toString()
                 }));
-                return console.log("Inserted new alias");
+                return console.log("Inserted new alias with ending: " + num.toString());
             });
         });
     });
@@ -119,6 +127,7 @@ app.get('*', function(request, response) {
     var userEnding = request.url.slice(1);
     
     // Search for this ending.
+    console.log("Searching: " + userEnding);
     collection.find(
         { "ending" : { $eq : userEnding } },
         { _id : 0 },
