@@ -4,7 +4,7 @@ var fs = require('fs');
 var mongo = require('mongodb').MongoClient;
 var app = express();
 
-var appURL = 'https://shorturl-djmot.herokuapp.com/';
+var appURL = 'https://shorturl-djmot.herokuapp.com';
 var dbURL = 'mongodb://djmot:' + process.env.MONGODB_PASSWORD + '@ds021356.mlab.com:21356/data';
 
 //----------------------------------------------------------------------------
