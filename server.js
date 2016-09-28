@@ -14,10 +14,9 @@ var dbURL = 'mongodb://' + process.env.IP + ':27017/data';
 function verifyURL(URL) {
     // Just check that URL begins with 'http://' or 'https://'.
     if (URL.length < 8) {return false;}
-    if (    
-            URL.substring(0, 7) === 'http://'
-        ||  URL.substring(0, 8) === 'https://'
-    ) {return true;}
+    if (    URL.substring(0, 7) === 'http://'
+        ||  URL.substring(0, 8) === 'https://' ) 
+        {return true;}
     return false;
 }
 
@@ -73,7 +72,8 @@ app.get('/new/*', function(request, response) {
             return console.log("Found and returned document");
         }
             
-        // Otherwise create new alias.
+        // Otherwise create new alias, attempt to insert, and send to user
+        // if all goes well.
         fs.readFile("number.txt", 'utf8', function(err, data) {
             if (err) {
                 response.writeHead(400, { 'Content-Type' : 'text/plain' });
@@ -99,6 +99,12 @@ app.get('/new/*', function(request, response) {
                     response.end("Error: insert error");
                     return console.log("Error: insert error");
                 }
+                response.writeHead(200, { 'Content-Type' : 'application/json' });
+                response.end(JSON.stringify({
+                    "old_url" : userURL,
+                    "new_url" : appURL + "/" + num.toString()
+                }));
+                return console.log("Inserted new alias");
             });
         });
     });
@@ -110,15 +116,12 @@ app.get('/new/*', function(request, response) {
 // Check to see if URL is an alias; if not found in db, display about page.
 app.get('*', function(request, response) {
     
-    // Extract user URL.
-    var userEnding = request.url;
-    
-    // Remove the appURL base and the ending '/'.
-    userEnding = userURL.slice(appURL.length + 1);
+    // Extract user URL, remove the ending '/'.
+    var userEnding = request.url.slice(1);
     
     // Search for this ending.
     collection.find(
-        { "ending" : { $eq : ending } },
+        { "ending" : { $eq : userEnding } },
         { _id : 0 },
         { limit : 1 }
     ).toArray(function(err, documents) {
@@ -130,16 +133,14 @@ app.get('*', function(request, response) {
         
         // If ending found, then redirect user to the old_url.
         if (documents.length > 0) {
-            
-            //TODO: fix this block
-            response.writeHead(200, { 'Content-Type' : 'application/json' });
-            response.end(JSON.stringify(documents[0]));
-            return console.log("Found and returned document");
+            response.writeHead(301, { 'Location' : documents[0]["old_url"] });
+            response.end();
+            return console.log("Found alias and redirected");
         }
         
         // Otherwise display about page.
         response.sendFile(path.join(__dirname, '/about.html'));
-    }
+    });
 });
 
 
