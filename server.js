@@ -4,9 +4,8 @@ var fs = require('fs');
 var mongo = require('mongodb').MongoClient;
 var app = express();
 
-// Note: these may need to change to deploy to heroku.
-var appURL = 'https://project-djmot.c9users.io';
-var dbURL = 'mongodb://' + process.env.IP + ':27017/data';
+var appURL = 'https://shorturl-djmot.herokuapp.com/';
+var dbURL = 'mongodb://djmot:' + process.env.MONGODB_PASSWORD + '@ds021356.mlab.com:21356/data';
 
 //----------------------------------------------------------------------------
 // Helper functions.
