@@ -4,15 +4,14 @@ var fs = require('fs');
 var mongo = require('mongodb').MongoClient;
 var app = express();
 
-/*For heroku deployment:
+/*For heroku deployment:*/
 var appURL = 'https://shorturl-djmot.herokuapp.com';
-var dbURL = 'mongodb://djmot:' + process.env.MONGODB_PASSWORD + '@ds021356.mlab.com:21356/data';
+
+/*For cloud9 development:
+var appURL = 'https://project-djmot.c9users.io';
 */
 
-/*For cloud9 development:*/
-var appURL = 'https://project-djmot.c9users.io';
 var dbURL = 'mongodb://djmot:' + process.env.MONGODB_PASSWORD + '@ds021356.mlab.com:21356/data';
-
 
 //----------------------------------------------------------------------------
 // Helper functions.
